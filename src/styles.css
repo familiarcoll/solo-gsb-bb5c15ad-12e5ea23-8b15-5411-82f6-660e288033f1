@@ -800,6 +800,11 @@ tr.summary-reserved-row td {
   opacity: 0.55;
 }
 
+/* 冲突锁定期间：分配清单重新可交互，仅开放只读工具入口 */
+.layout.locked .panel-unlocked-readonly {
+  pointer-events: auto;
+}
+
 .conflict-backdrop {
   z-index: 300;
 }
@@ -849,4 +854,96 @@ tr.summary-reserved-row td {
   background: rgba(5, 8, 15, 0.85);
   z-index: 400;
   font-size: 14px;
+}
+
+/* ---- DHCP 类无静态路由（Option 121） ---- */
+/* 冲突锁定期间亦可打开：层级置于冲突弹窗（z-index 300）之上、启动遮罩（400）之下 */
+.csr-backdrop {
+  z-index: 320;
+}
+
+.csr-modal {
+  width: 860px;
+}
+
+.csr-breakdown-head {
+  margin: 8px 0 4px;
+  font-size: 12.5px;
+}
+
+.csr-breakdown {
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 8px 10px;
+  background: var(--panel-2);
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  max-height: 220px;
+  overflow-y: auto;
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12.5px;
+}
+
+.csr-bytes {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.csr-byte-group {
+  padding: 1px 6px;
+  border-radius: 4px;
+  letter-spacing: 0.5px;
+  white-space: pre;
+}
+
+.csr-byte-prefix {
+  background: rgba(79, 140, 255, 0.16);
+  color: #a8c4ff;
+}
+
+.csr-byte-target {
+  background: rgba(52, 201, 142, 0.14);
+  color: #8fe3bd;
+}
+
+.csr-byte-target.csr-byte-empty {
+  background: transparent;
+  color: var(--muted);
+  font-family: inherit;
+  letter-spacing: normal;
+}
+
+.csr-byte-gw {
+  background: rgba(229, 168, 94, 0.14);
+  color: #f0c690;
+}
+
+.csr-byte-route {
+  font-family: inherit;
+  letter-spacing: normal;
+}
+
+.csr-decode {
+  margin-top: 14px;
+  border-top: 1px dashed var(--border);
+  padding-top: 10px;
+}
+
+.csr-decode-actions {
+  display: flex;
+  gap: 8px;
+  margin: 6px 0;
+}
+
+.csr-decode-table {
+  margin-top: 8px;
+  max-height: 220px;
+}
+
+.csr-cell-bytes code {
+  font-size: 12px;
+  letter-spacing: 0.4px;
 }

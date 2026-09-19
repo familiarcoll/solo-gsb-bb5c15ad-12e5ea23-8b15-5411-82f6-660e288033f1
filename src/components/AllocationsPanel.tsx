@@ -7,11 +7,21 @@ import StaticHostsModal from './StaticHostsModal';
 
 interface Props {
   plan: Plan;
+  /** 冲突锁定：仅只读工具（含无类路由）可用，调整容量/释放禁用 */
+  locked?: boolean;
   onRelease: (id: string) => void;
   onResize: (alloc: Allocation) => void;
+  /** 类无静态路由入口提升到 App 层渲染：冲突锁定期间仍可使用（纯本地只读） */
+  onOpenClasslessRoute: (alloc: Allocation) => void;
 }
 
-export default function AllocationsPanel({ plan, onRelease, onResize }: Props) {
+export default function AllocationsPanel({
+  plan,
+  locked = false,
+  onRelease,
+  onResize,
+  onOpenClasslessRoute,
+}: Props) {
   const [dhcpTarget, setDhcpTarget] = useState<Allocation | null>(null);
   const [rdnsTarget, setRdnsTarget] = useState<Allocation | null>(null);
   const [hostsTarget, setHostsTarget] = useState<Allocation | null>(null);
@@ -32,7 +42,7 @@ export default function AllocationsPanel({ plan, onRelease, onResize }: Props) {
   });
 
   return (
-    <section className="panel">
+    <section className={`panel${locked ? ' panel-unlocked-readonly' : ''}`}>
       <h2>分配清单（{plan.allocations.length}）</h2>
       {sorted.length === 0 ? (
         <p className="muted">暂无分配。可在左侧按主机数申请子网，或创建命名保留段。</p>
@@ -73,22 +83,51 @@ export default function AllocationsPanel({ plan, onRelease, onResize }: Props) {
                       <span className="row-actions inline">
                         {a.kind === 'subnet' && (
                           <>
-                            <button className="btn small" onClick={() => setDhcpTarget(a)}>
+                            <button
+                              className="btn small"
+                              disabled={locked}
+                              title={locked ? '冲突锁定期间不可用' : undefined}
+                              onClick={() => setDhcpTarget(a)}
+                            >
                               DHCP 池
                             </button>
-                            <button className="btn small" onClick={() => setRdnsTarget(a)}>
+                            <button
+                              className="btn small"
+                              title="纯本地只读，冲突锁定期间亦可使用"
+                              onClick={() => onOpenClasslessRoute(a)}
+                            >
+                              无类路由
+                            </button>
+                            <button
+                              className="btn small"
+                              disabled={locked}
+                              title={locked ? '冲突锁定期间不可用' : undefined}
+                              onClick={() => setRdnsTarget(a)}
+                            >
                               反向 DNS
                             </button>
-                            <button className="btn small" onClick={() => setHostsTarget(a)}>
+                            <button
+                              className="btn small"
+                              disabled={locked}
+                              title={locked ? '冲突锁定期间不可用' : undefined}
+                              onClick={() => setHostsTarget(a)}
+                            >
                               静态主机
                             </button>
                           </>
                         )}
-                        <button className="btn small" onClick={() => onResize(a)}>
+                        <button
+                          className="btn small"
+                          disabled={locked}
+                          title={locked ? '冲突锁定期间编辑已锁定' : undefined}
+                          onClick={() => onResize(a)}
+                        >
                           调整容量
                         </button>
                         <button
                           className="btn small danger"
+                          disabled={locked}
+                          title={locked ? '冲突锁定期间编辑已锁定' : undefined}
                           onClick={() => {
                             if (window.confirm(`释放「${a.name}」(${a.cidr})？`)) onRelease(a.id);
                           }}

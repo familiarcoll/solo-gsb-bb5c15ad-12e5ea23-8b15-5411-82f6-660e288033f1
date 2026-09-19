@@ -39,6 +39,7 @@ import ConflictModal from './components/ConflictModal';
 import CryptoBackupModal from './components/CryptoBackupModal';
 import BatchApplyModal from './components/BatchApplyModal';
 import PlanDiffModal from './components/PlanDiffModal';
+import ClasslessRouteModal from './components/ClasslessRouteModal';
 
 interface MigrationRequest {
   title: string;
@@ -87,6 +88,7 @@ export default function App() {
   const [backupExportOpen, setBackupExportOpen] = useState(false);
   const [backupImport, setBackupImport] = useState<{ name: string; text: string } | null>(null);
   const [batchOpen, setBatchOpen] = useState(false);
+  const [classlessRouteTarget, setClasslessRouteTarget] = useState<Allocation | null>(null);
   const [toast, setToast] = useState<string | null>(null);
   const [conflict, setConflict] = useState<{ local: Revision; remote: Revision } | null>(null);
   const [ready, setReady] = useState(false);
@@ -552,8 +554,10 @@ export default function App() {
           />
           <AllocationsPanel
             plan={plan}
+            locked={locked}
             onRelease={releaseAllocation}
             onResize={(a) => setResizeTarget(a)}
+            onOpenClasslessRoute={(a) => setClasslessRouteTarget(a)}
           />
         </section>
       </main>
@@ -627,6 +631,13 @@ export default function App() {
           fileName={backupImport.name}
           onSubmit={submitImportBackup}
           onClose={() => setBackupImport(null)}
+        />
+      )}
+
+      {classlessRouteTarget && (
+        <ClasslessRouteModal
+          alloc={classlessRouteTarget}
+          onClose={() => setClasslessRouteTarget(null)}
         />
       )}
 
