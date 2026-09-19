@@ -4,6 +4,7 @@ import { broadcastOf, contains, longToIpv4, parseCidr, usableHosts } from '../li
 import DhcpPoolModal from './DhcpPoolModal';
 import ReverseDnsModal from './ReverseDnsModal';
 import StaticHostsModal from './StaticHostsModal';
+import ClasslessRoutesModal from './ClasslessRoutesModal';
 
 interface Props {
   plan: Plan;
@@ -15,6 +16,7 @@ export default function AllocationsPanel({ plan, onRelease, onResize }: Props) {
   const [dhcpTarget, setDhcpTarget] = useState<Allocation | null>(null);
   const [rdnsTarget, setRdnsTarget] = useState<Allocation | null>(null);
   const [hostsTarget, setHostsTarget] = useState<Allocation | null>(null);
+  const [routesTarget, setRoutesTarget] = useState<Allocation | null>(null);
   const rootOf = (alloc: Allocation) => {
     const ac = parseCidr(alloc.cidr);
     if (!ac) return '—';
@@ -82,6 +84,9 @@ export default function AllocationsPanel({ plan, onRelease, onResize }: Props) {
                             <button className="btn small" onClick={() => setHostsTarget(a)}>
                               静态主机
                             </button>
+                            <button className="btn small" onClick={() => setRoutesTarget(a)}>
+                              类无静态路由
+                            </button>
                           </>
                         )}
                         <button className="btn small" onClick={() => onResize(a)}>
@@ -112,6 +117,9 @@ export default function AllocationsPanel({ plan, onRelease, onResize }: Props) {
       )}
       {hostsTarget && (
         <StaticHostsModal alloc={hostsTarget} onClose={() => setHostsTarget(null)} />
+      )}
+      {routesTarget && (
+        <ClasslessRoutesModal alloc={routesTarget} onClose={() => setRoutesTarget(null)} />
       )}
     </section>
   );

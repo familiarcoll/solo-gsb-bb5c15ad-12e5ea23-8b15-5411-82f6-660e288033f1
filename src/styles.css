@@ -231,6 +231,11 @@ textarea:focus {
   font-size: 12.5px;
 }
 
+.form-error {
+  color: var(--red);
+  font-size: 12.5px;
+}
+
 .hint {
   font-size: 12.5px;
   color: var(--green);
@@ -682,6 +687,12 @@ tr.policy-permit td {
 
 .dhcp-result textarea {
   color: #a8c4ff;
+}
+
+.hex-cell {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 12px;
+  white-space: nowrap;
 }
 
 /* ---- 路由汇总 ---- */
